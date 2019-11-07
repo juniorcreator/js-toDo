@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>To do</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="to-do">
+  <h1>To do</h1>
+  <nav class="navbar navbar-light bg-dark">
+    <form class="form-inline" id="add">
+      <input class="form-control mr-sm-2" type="search" placeholder="Enter name to do" aria-label="Search">
+      <button class="btn btn-dark my-2 my-sm-0" type="submit">Add</button>
+    </form>
+    <form class="form-inline" id="search">
+      <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+      <button class="btn btn-dark my-2 my-sm-0" type="submit">Search</button>
+    </form>
+  </nav>
+  <table class="table table-dark" id="table">
+    <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Name to do</th>
+      <th scope="col">Edit</th>
+      <th scope="col">Delete</th>
+    </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+</div>
+<script src="js/build/js.js"></script>
+</body>
+</html>
