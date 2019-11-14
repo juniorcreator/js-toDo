@@ -3,7 +3,6 @@
 function ToDo() {
   var _this = this;
 
-  this.list = [{ id: 0, name: 'do smth..', isDone: false, isselected: false }, { id: 1, name: 'do smth2..', isDone: false, isselected: false }];
   this.doom = {
     table: document.getElementById('table'),
     tbody: document.querySelector('.table tbody'),
@@ -13,9 +12,7 @@ function ToDo() {
     doneCount: document.getElementById('done-count')
   };
   this.renderMethod = function () {
-    console.log(_this.list, 'renderMethod');
-
-    _this.list.forEach(function (item, index) {
+    _this.getLocal().forEach(function (item, index) {
       var tr = document.createElement('tr');
       var th = document.createElement('th');
       var td = document.createElement('td');
@@ -71,36 +68,40 @@ function ToDo() {
   this.save = function (e) {
     e.target.parentElement.parentElement.classList.remove('edit');
     var input = e.target.parentElement.parentElement.children[1].children[1];
+    var todo = _this.getLocal();
     var id = +e.target.parentElement.parentElement.dataset.index;
-    var index = _this.list.findIndex(function (item) {
+    var index = todo.findIndex(function (item) {
       return item.id === id;
     });
-    _this.list[index].name = input.value;
-    _this.list[index].isselected = false;
+    todo[index].name = input.value;
+    todo[index].isselected = false;
+    _this.setLocal(todo);
     _this.doom.tbody.innerHTML = '';
     _this.renderMethod();
     _this.doneCount();
   };
   this.delete = function (e) {
+    var todo = _this.getLocal();
     var id = +e.target.parentElement.parentElement.dataset.index;
-    var index = _this.list.findIndex(function (item) {
+    var index = todo.findIndex(function (item) {
       return item.id === id;
     });
-    _this.list.splice(index, 1);
+    todo.splice(index, 1);
     _this.doom.tbody.innerHTML = '';
+    _this.setLocal(todo);
     _this.renderMethod();
     _this.doneCount();
   };
   this.create = function () {
     var create = function create(e) {
       e.preventDefault();
-      _this.list.push({ id: Math.random(), name: _this.doom.addInput.value, isDone: false, isselected: false });
+      var todos = _this.getLocal();
+      todos.push({ id: Math.random(), name: _this.doom.addInput.value, isDone: false, isselected: false });
       _this.doom.tbody.innerHTML = '';
       _this.doom.addInput.value = '';
+      _this.setLocal(todos);
       _this.renderMethod();
-      console.log(_this.list);
     };
-    console.log(_this);
     _this.doom.addBtn.addEventListener('click', create);
     _this.doom.addBtn.addEventListener('keypress', function (e) {
       e.keyCode === 13 ? create() : null;
@@ -108,25 +109,40 @@ function ToDo() {
   };
   this.doneCount = function () {
     var t = 0;
-    _this.list.forEach(function (i) {
+    _this.getLocal().forEach(function (i) {
       i.isselected ? t++ : t += 0;
     });
     _this.doom.doneCount.textContent = t;
   };
   this.select = function (e) {
+    var todo = _this.getLocal();
     var id = +e.target.parentElement.parentElement.dataset.index;
-    var index = _this.list.findIndex(function (item) {
+    var index = todo.findIndex(function (item) {
       return item.id === id;
     });
-    _this.list[index].isselected = !_this.list[index].isselected;
+    todo[index].isselected = !todo[index].isselected;
     _this.doom.tbody.innerHTML = '';
+    _this.setLocal(todo);
     _this.renderMethod();
     _this.doneCount();
   };
-  this.removeFromArray = function () {};
+  this.setLocal = function (obg) {
+    localStorage.setItem('todo', JSON.stringify(obg));
+    console.log(obg);
+  };
+  this.getLocal = function () {
+    return JSON.parse(localStorage.getItem('todo'));
+  };
+  this.initLocal = function () {
+    console.log('initLocal');
+    if (!localStorage.getItem('todo')) {
+      localStorage.setItem('todo', JSON.stringify([{ id: 0, name: 'do smth..', isDone: false, isselected: false }, { id: 1, name: 'do smth2..', isDone: false, isselected: false }]));
+    }
+  };
   this.init = function () {
-    _this.renderMethod();
     _this.create();
+    _this.initLocal();
+    _this.renderMethod();
     _this.doneCount();
   };
 }

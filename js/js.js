@@ -1,8 +1,4 @@
 function ToDo() {
-  this.list = [
-    {id: 0, name: 'do smth..', isDone: false, isselected: false},
-    {id: 1, name: 'do smth2..', isDone: false, isselected: false},
-  ];
   this.doom = {
     table: document.getElementById('table'),
     tbody: document.querySelector('.table tbody'),
@@ -12,9 +8,7 @@ function ToDo() {
     doneCount: document.getElementById('done-count'),
   };
   this.renderMethod = () => {
-    console.log(this.list, 'renderMethod');
-
-    this.list.forEach((item, index) => {
+    this.getLocal().forEach((item, index) => {
       let tr = document.createElement('tr');
       let th = document.createElement('th');
       let td = document.createElement('td');
@@ -70,56 +64,76 @@ function ToDo() {
   this.save = (e) => {
     e.target.parentElement.parentElement.classList.remove('edit');
     let input = e.target.parentElement.parentElement.children[1].children[1];
+    let todo = this.getLocal();
     let id = +e.target.parentElement.parentElement.dataset.index;
-    let index = this.list.findIndex((item) => item.id === id);
-    this.list[index].name = input.value;
-    this.list[index].isselected = false;
+    let index = todo.findIndex((item) => item.id === id);
+    todo[index].name = input.value;
+    todo[index].isselected = false;
+    this.setLocal(todo);
     this.doom.tbody.innerHTML = '';
     this.renderMethod();
     this.doneCount();
   };
   this.delete = (e) => {
+    let todo = this.getLocal();
     let id = +e.target.parentElement.parentElement.dataset.index;
-    let index = this.list.findIndex((item) => item.id === id);
-    this.list.splice(index, 1);
+    let index = todo.findIndex((item) => item.id === id);
+    todo.splice(index, 1);
     this.doom.tbody.innerHTML = '';
+    this.setLocal(todo);
     this.renderMethod();
     this.doneCount();
   };
   this.create = () => {
     const create = (e) => {
       e.preventDefault();
-      this.list.push({id: Math.random(), name: this.doom.addInput.value, isDone: false, isselected: false});
+      let todos = this.getLocal();
+      todos.push({id: Math.random(), name: this.doom.addInput.value, isDone: false, isselected: false});
       this.doom.tbody.innerHTML = '';
       this.doom.addInput.value = '';
+      this.setLocal(todos);
       this.renderMethod();
-      console.log(this.list);
     };
-    console.log(this);
     this.doom.addBtn.addEventListener('click', create);
     this.doom.addBtn.addEventListener('keypress', (e) => {e.keyCode === 13 ? create() : null});
   };
   this.doneCount = () => {
     let t = 0;
-        this.list.forEach(i => {
+        this.getLocal().forEach(i => {
           i.isselected ? t++ : t += 0;
         });
     this.doom.doneCount.textContent = t;
   };
   this.select = (e) => {
+    let todo = this.getLocal();
     let id = +e.target.parentElement.parentElement.dataset.index;
-    let index = this.list.findIndex((item) => item.id === id);
-    this.list[index].isselected = !this.list[index].isselected;
+    let index = todo.findIndex((item) => item.id === id);
+    todo[index].isselected = !todo[index].isselected;
     this.doom.tbody.innerHTML = '';
+    this.setLocal(todo);
     this.renderMethod();
     this.doneCount();
   };
-  this.removeFromArray = () => {
-
+  this.setLocal = (obg) => {
+      localStorage.setItem('todo', JSON.stringify(obg))
+    console.log(obg);
+  };
+  this.getLocal =() => {
+    return JSON.parse(localStorage.getItem('todo'));
+  };
+  this.initLocal =() => {
+    console.log('initLocal');
+    if (!localStorage.getItem('todo')) {
+      localStorage.setItem('todo', JSON.stringify([
+        {id: 0, name: 'do smth..', isDone: false, isselected: false},
+        {id: 1, name: 'do smth2..', isDone: false, isselected: false},
+      ]));
+    }
   };
   this.init = () => {
-    this.renderMethod();
     this.create();
+    this.initLocal();
+    this.renderMethod();
     this.doneCount();
   }
 }
