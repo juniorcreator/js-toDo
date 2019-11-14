@@ -135,7 +135,7 @@ function ToDo() {
   };
   this.initLocal = function () {
     console.log('initLocal');
-    if (!localStorage.getItem('todo')) {
+    if (!localStorage.getItem('todo') || _this.getLocal().length < 1) {
       localStorage.setItem('todo', JSON.stringify([{ id: 0, name: 'do smth..', isDone: false, isselected: false }, { id: 1, name: 'do smth2..', isDone: false, isselected: false }]));
     }
   };
