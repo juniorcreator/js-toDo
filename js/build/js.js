@@ -128,7 +128,6 @@ function ToDo() {
   };
   this.setLocal = function (obg) {
     localStorage.setItem('todo', JSON.stringify(obg));
-    console.log(obg);
   };
   this.getLocal = function () {
     return JSON.parse(localStorage.getItem('todo'));
