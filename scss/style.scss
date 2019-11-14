@@ -59,6 +59,9 @@
           button.save {
             display: inline-block;
           }
+          td label {
+            z-index: -1;
+          }
         }
       }
     }
