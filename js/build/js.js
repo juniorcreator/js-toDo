@@ -7,7 +7,10 @@ function ToDo() {
   this.doom = {
     table: document.getElementById('table'),
     tbody: document.querySelector('.table tbody'),
-    btnEdit: document.querySelectorAll('.edit')
+    btnEdit: document.querySelectorAll('.edit'),
+    addInput: document.getElementById('add'),
+    addBtn: document.getElementById('add-btn'),
+    doneCount: document.getElementById('done-count')
   };
   this.renderMethod = function () {
     console.log(_this.list, 'renderMethod');
@@ -38,9 +41,12 @@ function ToDo() {
       btnEdit.addEventListener('click', _this.edit);
       btnSave.addEventListener('click', _this.save);
       btnDel.addEventListener('click', _this.delete);
+      label.addEventListener('click', _this.select);
 
       td.appendChild(label);
       td.appendChild(input);
+
+      item.isselected ? td.classList.add('done') : '';
 
       td2.appendChild(btnEdit);
       td2.appendChild(btnSave);
@@ -55,23 +61,25 @@ function ToDo() {
       _this.doom.tbody.appendChild(tr);
     });
   };
-  this.edit = function () {
-    this.parentElement.parentElement.classList.add('edit');
-    var input = this.parentElement.parentElement.children[1].children[1];
-    var label = this.parentElement.parentElement.children[1].children[0].textContent;
+  this.edit = function (e) {
+    e.target.parentElement.parentElement.classList.add('edit');
+    e.target.parentElement.parentElement.children[1].classList.remove('done');
+    var input = e.target.parentElement.parentElement.children[1].children[1];
+    var label = e.target.parentElement.parentElement.children[1].children[0].textContent;
     input.value = label;
   };
   this.save = function (e) {
     e.target.parentElement.parentElement.classList.remove('edit');
     var input = e.target.parentElement.parentElement.children[1].children[1];
-    var label = e.target.parentElement.parentElement.children[1].children[0];
     var id = +e.target.parentElement.parentElement.dataset.index;
     var index = _this.list.findIndex(function (item) {
       return item.id === id;
     });
     _this.list[index].name = input.value;
+    _this.list[index].isselected = false;
     _this.doom.tbody.innerHTML = '';
     _this.renderMethod();
+    _this.doneCount();
   };
   this.delete = function (e) {
     var id = +e.target.parentElement.parentElement.dataset.index;
@@ -81,25 +89,47 @@ function ToDo() {
     _this.list.splice(index, 1);
     _this.doom.tbody.innerHTML = '';
     _this.renderMethod();
+    _this.doneCount();
+  };
+  this.create = function () {
+    var create = function create(e) {
+      e.preventDefault();
+      _this.list.push({ id: Math.random(), name: _this.doom.addInput.value, isDone: false, isselected: false });
+      _this.doom.tbody.innerHTML = '';
+      _this.doom.addInput.value = '';
+      _this.renderMethod();
+      console.log(_this.list);
+    };
+    console.log(_this);
+    _this.doom.addBtn.addEventListener('click', create);
+    _this.doom.addBtn.addEventListener('keypress', function (e) {
+      e.keyCode === 13 ? create() : null;
+    });
+  };
+  this.doneCount = function () {
+    var t = 0;
+    _this.list.forEach(function (i) {
+      i.isselected ? t++ : t += 0;
+    });
+    _this.doom.doneCount.textContent = t;
+  };
+  this.select = function (e) {
+    var id = +e.target.parentElement.parentElement.dataset.index;
+    var index = _this.list.findIndex(function (item) {
+      return item.id === id;
+    });
+    _this.list[index].isselected = !_this.list[index].isselected;
+    _this.doom.tbody.innerHTML = '';
+    _this.renderMethod();
+    _this.doneCount();
   };
   this.removeFromArray = function () {};
   this.init = function () {
     _this.renderMethod();
+    _this.create();
+    _this.doneCount();
   };
 }
 
 var toDo = new ToDo();
 toDo.init();
-
-var test = function test() {
-  var btnedit = document.querySelectorAll('.edit');
-
-  for (var i = 0; i < btnedit.length; i++) {
-    btnedit[0].addEventListener('click', function (e) {
-      console.log(e.target);
-    });
-  }
-
-  // console.log(btnedit[0]);
-};
-// test();
